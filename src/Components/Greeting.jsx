@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import auth from '../../firebase.config';
+import SocialLogin from '../Authentication/SocialLogin';
 
 const Greeting = () => {
-    const user = auth;
+    const user = auth.currentUser;
     console.log(user)
     const navigate = useNavigate();
     return (
@@ -32,6 +33,16 @@ const Greeting = () => {
                 </motion.p>
 
                 {/* Get Started Button */}
+                {user?.email ? 
+                <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => navigate("/")}
+                className="mt-6 px-6 py-3 bg-fuchsia-600 text-white font-semibold rounded-full shadow-lg hover:bg-fuchsia-800 transition"
+            >
+                <SocialLogin></SocialLogin>
+               </motion.button>
+                : 
                 <Link to="/tasks">
                     <motion.button
                         whileHover={{ scale: 1.1 }}
@@ -42,6 +53,8 @@ const Greeting = () => {
                         Get Started
                     </motion.button>
                 </Link>
+                }
+                
 
                 {/* Decorative Background Elements */}
                 <div className="absolute top-10 left-10 w-16 h-16 bg-white opacity-20 rounded-full blur-3xl"></div>
