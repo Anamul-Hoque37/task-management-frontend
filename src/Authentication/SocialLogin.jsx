@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import useAxiosSecure from '../Hooks/useAxiosSecure';
 
 const SocialLogin = () => {
+    
     const provider = new GoogleAuthProvider();
     const axiosSecure = useAxiosSecure();
     const navigate = useNavigate();
@@ -15,12 +16,13 @@ const SocialLogin = () => {
         signInWithPopup(auth, provider)
             .then((result) => {
                 console.log(result.user);
-                const userInfo = {
+                const user = {
                     email: result.user?.email,
                     name: result.user?.displayName,
-                    image: result.user?.photoURL
+                    image: result.user?.photoURL,
+                    uid: result.user?.uid,
                 }
-                axiosSecure.post('/users', userInfo)
+                axiosSecure.post('/users', user)
                     .then(res => {
                         console.log(res.data)
                         navigate(location?.state ? location.state : "/")

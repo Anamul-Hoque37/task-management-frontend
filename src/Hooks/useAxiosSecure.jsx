@@ -2,7 +2,8 @@ import axios from 'axios';
 import React from 'react';
 
 const axiosSecure = axios.create({
-    baseURL: 'http://localhost:5000'
+    baseURL: 'https://task-backend-rho-ivory.vercel.app'
+    
 })
 
 const useAxiosSecure = () => {

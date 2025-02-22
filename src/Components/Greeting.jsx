@@ -2,8 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import auth from '../../firebase.config';
 
 const Greeting = () => {
+    const user = auth;
+    console.log(user)
     const navigate = useNavigate();
     return (
         <div className='min-h-screen'>

@@ -3,6 +3,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import useAxiosSecure from '../Hooks/useAxiosSecure';
 import Swal from 'sweetalert2';
 import { useQuery } from '@tanstack/react-query';
+import auth from '../../firebase.config';
 
 const initialTasks = {
     'To-Do': [],
@@ -11,6 +12,7 @@ const initialTasks = {
 };
 
 const TaskManagement = () => {
+    const user = auth.currentUser;
     const axiosSecure = useAxiosSecure();
     const [tasks, setTasks] = useState(initialTasks);
     const [newTask, setNewTask] = useState({ title: '', description: '', category: 'To-Do' });
@@ -89,6 +91,7 @@ const TaskManagement = () => {
             title: newTask.title,
             description: newTask.description,
             category: newTask.category,
+            uid: user.uid,
         };
 
         const addTask = await axiosSecure.post('/tasks', task);

@@ -12,6 +12,7 @@ import {
 } from '@tanstack/react-query';
 import Greeting from './Components/Greeting.jsx';
 import TaskManagement from './Components/taskManagement.jsx';
+import ProtectedRoute from './Authentication/ProtectedRoute.jsx';
 
 const router = createBrowserRouter([
   {
@@ -24,7 +25,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/tasks",
-        element: <TaskManagement></TaskManagement>
+        element: <ProtectedRoute><TaskManagement></TaskManagement></ProtectedRoute>,
       },
     ],
   },
