@@ -13,22 +13,45 @@ const initialTasks = {
 
 const TaskManagement = () => {
     const user = auth.currentUser;
+    const email = user.email;
+    console.log(email);
     const axiosSecure = useAxiosSecure();
     const [tasks, setTasks] = useState(initialTasks);
     const [newTask, setNewTask] = useState({ title: '', description: '', category: 'To-Do' });
     const [editingTask, setEditingTask] = useState(null);
 
     // Fetch tasks from MongoDB
-    const { data: fetchedTasks = initialTasks } = useQuery({
-        queryKey: ['tasks'],
+    // const { data: fetchedTasks = initialTasks, isLoading, isError } = useQuery({
+    //     queryKey: ['tasks', email],
+    //     queryFn: async () => {
+    //         const res = await axiosSecure.get(`/tasks/${email}`);
+    //         return {
+    //             'To-Do': res.data['To-Do'].map(task => ({ ...task, id: task._id })),
+    //             'In Progress': res.data['In Progress'].map(task => ({ ...task, id: task._id })),
+    //             'Done': res.data['Done'].map(task => ({ ...task, id: task._id })),
+    //         };
+    //     },
+    //     staleTime: 0, // Ensure fresh data is fetched every time
+    // });
+
+    const { data: fetchedTasks = initialTasks, isLoading, isError } = useQuery({
+        queryKey: ['tasks', email],
         queryFn: async () => {
-            const res = await axiosSecure.get('/tasks');
+            const res = await axiosSecure.get(`/tasks/${email}`);
+            console.log('API Response:', res.data); // Debugging
+    
+            // Ensure the response has the expected structure
+            if (!res.data || typeof res.data !== 'object') {
+                throw new Error('Invalid response format');
+            }
+    
             return {
-                'To-Do': res.data['To-Do'].map(task => ({ ...task, id: task._id })),
-                'In Progress': res.data['In Progress'].map(task => ({ ...task, id: task._id })),
-                'Done': res.data['Done'].map(task => ({ ...task, id: task._id })),
+                'To-Do': res.data['To-Do']?.map(task => ({ ...task, id: task._id })) || [],
+                'In Progress': res.data['In Progress']?.map(task => ({ ...task, id: task._id })) || [],
+                'Done': res.data['Done']?.map(task => ({ ...task, id: task._id })) || [],
             };
-        }
+        },
+        staleTime: 0, // Ensure fresh data is fetched every time
     });
 
     // Update the tasks state when fetchedTasks changes
@@ -92,6 +115,7 @@ const TaskManagement = () => {
             description: newTask.description,
             category: newTask.category,
             uid: user.uid,
+            userEmail: email,
         };
 
         const addTask = await axiosSecure.post('/tasks', task);
@@ -194,6 +218,9 @@ const TaskManagement = () => {
         }
     };
 
+    if (isLoading) return <div>Loading...</div>;
+    if (isError) return <div>Error fetching tasks</div>;
+
     return (
         <div className="p-4 max-w-4xl min-h-screen mx-auto">
             <h2 className="text-2xl font-bold mb-4">Task Management</h2>
@@ -204,7 +231,7 @@ const TaskManagement = () => {
                     maxLength={50}
                     value={newTask.title}
                     onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                    className="border p-2 mr-2"
+                    className="border p-2 mr-2 bg-slate-50 text-slate-950 rounded-md"
                 />
                 <input
                     type="text"
@@ -212,18 +239,18 @@ const TaskManagement = () => {
                     maxLength={200}
                     value={newTask.description}
                     onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                    className="border p-2 mr-2"
+                    className="border p-2 mr-2 bg-slate-50 text-slate-950 rounded-md"
                 />
                 <select
                     value={newTask.category}
                     onChange={(e) => setNewTask({ ...newTask, category: e.target.value })}
-                    className="border p-2 mr-2"
+                    className="border p-2 mr-2 bg-slate-50 font-semibold text-teal-500 rounded-md"
                 >
-                    <option value="To-Do">To-Do</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Done">Done</option>
+                    <option className='font-semibold text-slate-800' value="To-Do">To-Do</option>
+                    <option className='font-semibold text-slate-800' value="In Progress">In Progress</option>
+                    <option className='font-semibold text-slate-800' value="Done">Done</option>
                 </select>
-                <button onClick={handleAddTask} className="bg-fuchsia-600 hover:bg-fuchsia-800 text-white p-2">
+                <button onClick={handleAddTask} className="bg-fuchsia-600 hover:bg-fuchsia-800 text-white p-2 rounded-md px-3 font-semibold">
                     Add Task
                 </button>
             </div>
@@ -270,7 +297,7 @@ const TaskManagement = () => {
                                     {...provided.droppableProps}
                                     className="bg-gray-100 p-4 rounded"
                                 >
-                                    <h3 className="font-semibold mb-2">{category}</h3>
+                                    <h3 className="font-semibold mb-2 text-slate-800">{category}</h3>
                                     {tasks[category].map((task, index) => (
                                         <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
                                             {(provided) => (
@@ -278,20 +305,20 @@ const TaskManagement = () => {
                                                     ref={provided.innerRef}
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
-                                                    className="bg-white p-2 mb-2 rounded shadow"
+                                                    className="bg-white p-2 mb-2 rounded shadow hover:bg-teal-300"
                                                 >
-                                                    <h4 className="font-semibold">{task.title}</h4>
-                                                    <p>{task.description}</p>
+                                                    <h4 className="font-semibold text-slate-800">{task.title}</h4>
+                                                    <p className='text-emerald-500 text-sm font-medium'>{task.description}</p>
                                                     <div className="flex justify-end space-x-2">
                                                         <button
                                                             onClick={() => handleEditTask(category, task.id)}
-                                                            className="text-yellow-500"
+                                                            className="text-yellow-500 border rounded-lg px-2 hover:bg-fuchsia-600 hover:text-white"
                                                         >
                                                             Edit
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteTask(category, task.id)}
-                                                            className="text-red-500"
+                                                            className="text-red-500 border rounded-lg px-2 hover:bg-fuchsia-600 hover:text-white"
                                                         >
                                                             Delete
                                                         </button>

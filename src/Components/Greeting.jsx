@@ -1,9 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import auth from '../../firebase.config';
-import SocialLogin from '../Authentication/SocialLogin';
 
 const Greeting = () => {
     const user = auth.currentUser;
@@ -11,7 +9,7 @@ const Greeting = () => {
     const navigate = useNavigate();
     return (
         <div className='min-h-screen'>
-            <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+            <div className="h-screen flex flex-col items-center px-4 sm:px-6 md:px-10 lg:px-14 justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white">
                 {/* Animated Title */}
                 <motion.h1
                     initial={{ opacity: 0, y: -20 }}
@@ -33,28 +31,25 @@ const Greeting = () => {
                 </motion.p>
 
                 {/* Get Started Button */}
-                {user?.email ? 
-                <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => navigate("/")}
-                className="mt-6 px-6 py-3 bg-fuchsia-600 text-white font-semibold rounded-full shadow-lg hover:bg-fuchsia-800 transition"
-            >
-                <SocialLogin></SocialLogin>
-               </motion.button>
-                : 
-                <Link to="/tasks">
+                {user?.email ?
+                    <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => navigate("/tasks")}
+                        className="mt-6 px-6 py-3 bg-fuchsia-600 text-white font-semibold rounded-full shadow-lg hover:bg-fuchsia-800 transition">
+                        Get Started
+                    </motion.button>
+                    :
                     <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => navigate("/")}
                         className="mt-6 px-6 py-3 bg-fuchsia-600 text-white font-semibold rounded-full shadow-lg hover:bg-fuchsia-800 transition"
                     >
-                        Get Started
+                        Sign In First
                     </motion.button>
-                </Link>
                 }
-                
+
 
                 {/* Decorative Background Elements */}
                 <div className="absolute top-10 left-10 w-16 h-16 bg-white opacity-20 rounded-full blur-3xl"></div>

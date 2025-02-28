@@ -18,30 +18,29 @@ const Navbar = () => {
     };
     return (
         <div>
-            <div className="navbar bg-slate-300">
+            <div className="navbar bg-slate-300 p-0 px-3">
                 <div className="flex-1">
-                    <a className="btn btn-ghost text-xl">Task Management</a>
+                    <a className="btn btn-ghost text-xl text-slate-900">Task Management</a>
                 </div>
-                <div>
-                    <div className="flex-none">
+                <div className='gap-2'>
+                    <div className="flex-none border rounded-lg py-1 px-2 text-center items-center bg-slate-50">
                         <label className="swap swap-rotate">
                             {/* This checkbox toggles the dark mode */}
                             <input type="checkbox" checked={isDarkMode} onChange={toggleDarkMode} />
                             {/* Light mode and Dark Mode icon */}
-                            <div className='text-5xl items-center text-center md:pr-4'>
+                            <div className='text-4xl items-center text-center'>
                                 {isDarkMode ? <CiLight /> : <MdDarkMode />}
                             </div>
                         </label>
                     </div>
                     <div className="flex-none">
-                        {user?.email ? <div className='h-14 w-14 border-2 border-white rounded-full'><img className='w-full h-full rounded-full' src={user.photoURL} alt="" /></div>
+                        {user?.email ? <div className='h-14 w-14 border-2 border-white rounded-full'><img className='w-full h-full rounded-full' src={user?.photoURL} alt="" /></div>
                         : 
                         <ul className="menu menu-horizontal px-1">
                             <li><div className='p-0'>
                                 <SocialLogin></SocialLogin>
                             </div></li>
                         </ul>}
-                        <div></div>
                     </div>
                 </div>
             </div>
